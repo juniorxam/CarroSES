@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Gestor - Sistema de Logística</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-ambulance"></i>
+                <div>
+                    <h1>Painel do Gestor</h1>
+                    <p>Monitoramento em Tempo Real</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <i class="fas fa-car"></i>
+                    <span>Veículos: <strong id="totalVehicles">12</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-road"></i>
+                    <span>Viagens: <strong id="activeTrips">5</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Concluídas: <strong id="completedTrips">28</strong></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="user-menu">
+                <div class="user-info">
+                    <i class="fas fa-user-shield"></i>
+                    <div>
+                        <strong>Carlos Silva</strong>
+                        <small>Gestor Administrativo</small>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    <li class="active">
+                        <a href="#">
+                            <i class="fas fa-map"></i>
+                            <span>Mapa ao Vivo</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="btnVeiculos">
+                            <i class="fas fa-car"></i>
+                            <span>Veículos</span>
+                            <span class="badge" id="vehicleBadge">12</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="btnViagens">
+                            <i class="fas fa-road"></i>
+                            <span>Viagens</span>
+                            <span class="badge" id="tripBadge">5</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="btnRelatorios">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Relatórios</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="btnConfig">
+                            <i class="fas fa-cog"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <h4>Status do Sistema</h4>
+                    <div class="status-item">
+                        <span>WebSocket:</span>
+                        <span class="status-indicator active" id="wsStatus">Conectado</span>
+                    </div>
+                    <div class="status-item">
+                        <span>Última atualização:</span>
+                        <span id="lastUpdate">00:00:00</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mapa -->
+            <div class="map-section">
+                <div class="map-header">
+                    <h2><i class="fas fa-map-marked-alt"></i> Mapa em Tempo Real</h2>
+                    <div class="map-controls">
+                        <button id="btnRefresh" class="btn-control">
+                            <i class="fas fa-sync-alt"></i> Atualizar
+                        </button>
+                        <button id="btnCenter" class="btn-control">
+                            <i class="fas fa-crosshairs"></i> Centralizar
+                        </button>
+                        <select id="filterStatus" class="filter-select">
+                            <option value="all">Todos os veículos</option>
+                            <option value="disponivel">Disponíveis</option>
+                            <option value="em_viagem">Em viagem</option>
+                            <option value="manutencao">Manutenção</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="map" class="map-container"></div>
+                
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-color available"></div>
+                        <span>Disponível</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color in-trip"></div>
+                        <span>Em Viagem</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color maintenance"></div>
+                        <span>Manutenção</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color inactive"></div>
+                        <span>Inativo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel de Solicitações -->
+            <div class="requests-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-clipboard-list"></i> Solicitações Pendentes</h3>
+                    <span class="badge" id="pendingBadge">3</span>
+                </div>
+                
+                <div class="requests-list" id="requestsList">
+                    <!-- Solicitações serão carregadas via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Painel de Veículos -->
+            <div class="vehicles-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-car"></i> Veículos Ativos</h3>
+                    <span class="badge" id="vehiclesBadge">8</span>
+                </div>
+                
+                <div class="vehicles-grid" id="vehiclesGrid">
+                    <!-- Veículos serão carregados via JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal de Detalhes -->
+        <div class="modal" id="detailsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Detalhes da Solicitação</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Conteúdo será carregado dinamicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" id="btnCancelTrip">Cancelar</button>
+                    <button class="btn-primary" id="btnAssignDriver">Atribuir Motorista</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="js/mockData.js"></script>
+    <script src="js/gestor.js"></script>
+</body>
+</html>
