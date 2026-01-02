@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Logística - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">
+                <i class="fas fa-ambulance"></i>
+                <h1>Secretaria de Saúde</h1>
+                <h2>Sistema de Logística</h2>
+            </div>
+        </div>
+        
+        <div class="login-card">
+            <h3>Entre no Sistema</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> E-mail
+                    </label>
+                    <input type="email" id="email" placeholder="seu.email@saude.gov.br" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Senha
+                    </label>
+                    <input type="password" id="password" placeholder="Sua senha" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">
+                        <i class="fas fa-user-tag"></i> Tipo de Usuário
+                    </label>
+                    <select id="role" required>
+                        <option value="">Selecione seu perfil</option>
+                        <option value="ADMIN">Gestor/Administrador</option>
+                        <option value="MOTORISTA">Motorista</option>
+                        <option value="SERVIDOR">Servidor</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+            
+            <div class="demo-accounts">
+                <h4>Contas de Demonstração:</h4>
+                <div class="accounts-grid">
+                    <div class="account-card" data-email="gestor@saude.gov.br" data-password="123456" data-role="ADMIN">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Gestor</span>
+                    </div>
+                    <div class="account-card" data-email="motorista@saude.gov.br" data-password="123456" data-role="MOTORISTA">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Motorista</span>
+                    </div>
+                    <div class="account-card" data-email="servidor@saude.gov.br" data-password="123456" data-role="SERVIDOR">
+                        <i class="fas fa-user-md"></i>
+                        <span>Servidor</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="login-footer">
+            <p>Sistema desenvolvido para a Secretaria Municipal de Saúde</p>
+            <p>Versão 1.0.0 | Suporte: (11) 99999-9999</p>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>
